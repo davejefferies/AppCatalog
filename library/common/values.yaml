@@ -1,0 +1,230 @@
+global:
+  labels: {}
+  annotations: {}
+  minNodePort: 9000
+  addMetalLBAnnotations: true
+  addTraefikAnnotations: true
+  stopAll: true
+
+fallbackDefaults:
+  storageClass:
+  probeType: http
+  serviceProtocol: tcp
+  serviceType: ClusterIP
+  persistenceType: pvc
+  pvcRetain: false
+  pvcSize: 50Gi
+  vciSize: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  probeTimeouts:
+    liveness:
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 5
+      successThreshold: 1
+    readiness:
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 5
+      successThreshold: 2
+    startup:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 60
+      successThreshold: 1
+
+image:
+  repository: "traefik/whoami"
+  tag: "v1.9@sha256:242dc9e8c40b180a38eeec0227a56dc7eb8baf48bc6e7737d881877c0e917f75"
+  pullPolicy: IfNotPresent
+
+bashImage:
+  repository: bash
+  tag: "4.4.23"
+  pullPolicy: IfNotPresent
+
+postgresImage:
+  repository: postgres
+  tag: "15.2"
+  pullPolicy: IfNotPresent
+
+securityContext:
+  container:
+    PUID: 568
+    UMASK: "002"
+    runAsNonRoot: true
+    runAsUser: 568
+    runAsGroup: 568
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    privileged: false
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      add: []
+      drop:
+        - ALL
+  pod:
+    fsGroup: 568
+    fsGroupChangePolicy: OnRootMismatch
+    supplementalGroups: []
+    sysctls: []
+
+resources:
+  limits:
+    cpu: 4000m
+    memory: 8Gi
+  requests:
+    cpu: 10m
+    memory: 50Mi
+  NVIDIA_CAPS:
+    - all
+
+podOptions:
+  enableServiceLinks: false
+  hostNetwork: false
+  restartPolicy: Always
+  dnsPolicy: ClusterFirst
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "1"
+  hostAliases: []
+  tolerations: []
+  runtimeClassName: ""
+  automountServiceAccountToken: false
+  terminationGracePeriodSeconds: 30
+
+notes:
+  header: |
+    # Welcome to using <{{ .Chart.Name }}>.
+  custom: |
+    ## Using <{{ .Chart.Name }}>
+    {{- if .Values.iXPortals -}}
+    ## Connecting externally
+    You can use this Chart by opening one of the following links in your browser:
+    {{- range .Values.iXPortals -}}
+    - {{ . }}
+    {{- end -}}
+    {{- end -}}
+  footer: ""
+
+TZ: UTC
+
+workload: {}
+
+service:
+  main:
+    enabled: true
+    primary: true
+    ports:
+      main:
+        enabled: true
+        primary: true
+        protocol: http
+
+persistence:
+  shared:
+    enabled: true
+    type: emptyDir
+    mountPath: /shared
+    targetSelectAll: true
+    varlogs:
+      enabled: true
+      type: emptyDir
+      mountPath: /var/logs
+      targetSelectAll: true
+    varrun:
+      enabled: true
+      type: emptyDir
+      mountPath: /var/run
+      medium: Memory
+      targetSelectAll: true
+    tmp:
+      enabled: true
+      type: emptyDir
+      mountPath: /tmp
+      targetSelectAll: true
+    devshm:
+      enabled: true
+      type: emptyDir
+      mountPath: /dev/shm
+      medium: Memory
+      targetSelectAll: true
+
+ixExternalInterfacesConfiguration: []
+
+ixExternalInterfacesConfigurationNames: []
+
+ixCertificates: []
+
+ixVolumes: []
+
+imagePullSecret: []
+
+configmap: {}
+
+secret: {}
+
+serviceAccount: {}
+
+rbac: {}
+
+scaleExternalInterface: []
+
+scaleCertificate: {}
+
+scaleGPU: []
+
+portal:
+  open:
+    enabled: false
+    override:
+      protocol:
+      host:
+      port:
+    path: ""
+    targetSelector:
+      ingress: ""
+      service: ""
+      port: ""
+
+manifestManager:
+  enabled: true
+  staging: false
+  install: true
+  check: true
+  delete: false
+
+APPURL: ""
+
+ingress:
+  main:
+    enabled: false
+    primary: true
+    required: false
+    nameOverride:
+    autoLink: false
+    enableFixedMiddlewares: true
+    clusterIssuer: ""
+    fixedMiddlewares:
+      - chain-basic
+    middlewares: []
+    annotationsList: []
+    annotations: {}
+    labelsList: []
+    labels: {}
+    ingressClassName:
+    hosts:
+        host: chart-example.local
+        paths:
+            path: /
+            pathType: Prefix
+            service:
+              name:
+              port:
+    tls: []

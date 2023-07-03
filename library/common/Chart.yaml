@@ -1,0 +1,10 @@
+apiVersion: v2
+appVersion: "latest"
+description: Helm Library for Truenas Scale
+keywords:
+  - library-chart
+  - common
+kubeVersion: '>=1.16.0-0'
+name: common
+type: library
+version: 1.0.0

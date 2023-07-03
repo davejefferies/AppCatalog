@@ -1,0 +1,22 @@
+{
+  "dependency": {},
+  "dev": {},
+  "enterprise": {
+    "cloudflareddns": {
+      "app_readme": "<p>Automate Cloudflare DNS records for those with a dynamic IP.</p>",
+      "categories": [
+        "networking"
+      ],
+      "description": "Automate Cloudflare DNS records for those with a dynamic IP",
+      "healthy": true,
+      "healthy_error": null,
+      "location": "/__w/catalog/stable/cloudflareddns",
+      "latest_version": "1.0.0",
+      "latest_app_version": "latest",
+      "latest_human_version": "1.0.0",
+      "name": "cloudflareddns",
+      "icon_url": "https://raw.githubusercontent.com/davejefferies/AppCatalog/master/icon/cloudflareddns.svg"
+    }
+  },
+  "stable": {}
+}
