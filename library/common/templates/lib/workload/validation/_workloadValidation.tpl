@@ -1,8 +1,8 @@
 {{/* Workload Basic Validation */}}
 {{/* Call this template:
-{{ include "common.lib.workload.primaryValidation" $ -}}
+{{ include "tc.v1.common.lib.workload.primaryValidation" $ -}}
 */}}
-{{- define "common.lib.workload.primaryValidation" -}}
+{{- define "tc.v1.common.lib.workload.primaryValidation" -}}
 
   {{/* Initialize values */}}
   {{- $hasPrimary := false -}}
@@ -14,7 +14,7 @@
     {{/* If workload is enabled */}}
     {{- if $workload.enabled -}}
 
-      {{- $types := (list "Deployment" "Job" "CronJob") -}}
+      {{- $types := (list "Deployment" "StatefulSet" "DaemonSet" "Job" "CronJob") -}}
       {{- if not (mustHas $workload.type $types) -}}
         {{- fail (printf "Workload - Expected <type> to be one of [%s], but got [%s]" (join ", " $types) $workload.type) -}}
       {{- end -}}

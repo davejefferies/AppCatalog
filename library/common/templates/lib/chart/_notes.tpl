@@ -1,21 +1,21 @@
-{{- define "common.lib.chart.notes" -}}
+{{- define "tc.v1.common.lib.chart.notes" -}}
 
-  {{- include "common.lib.chart.header" . -}}
+  {{- include "tc.v1.common.lib.chart.header" . -}}
 
-  {{- include "common.lib.chart.custom" . -}}
+  {{- include "tc.v1.common.lib.chart.custom" . -}}
 
-  {{- include "common.lib.chart.footer" . -}}
+  {{- include "tc.v1.common.lib.chart.footer" . -}}
 
 {{- end -}}
 
-{{- define "common.lib.chart.header" -}}
+{{- define "tc.v1.common.lib.chart.header" -}}
   {{- tpl $.Values.notes.header $ | nindent 0 }}
 {{- end -}}
 
-{{- define "common.lib.chart.custom" -}}
+{{- define "tc.v1.common.lib.chart.custom" -}}
   {{- tpl $.Values.notes.custom $ | nindent 0 }}
 {{- end -}}
 
-{{- define "common.lib.chart.footer" -}}
+{{- define "tc.v1.common.lib.chart.footer" -}}
   {{- tpl $.Values.notes.footer $ | nindent 0 }}
 {{- end -}}

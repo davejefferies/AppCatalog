@@ -2,11 +2,11 @@
 
 {{/* External Interface Annotations that are added to podSpec */}}
 {{/* Call this template:
-{{ include "common.lib.metadata.externalInterfacePodAnnotations" (dict "rootCtx" $ "podShortName" $podShortName) }}
+{{ include "tc.v1.common.lib.metadata.externalInterfacePodAnnotations" (dict "rootCtx" $ "podShortName" $podShortName) }}
 rootCtx is the root context of the chart
 objectData is object containing the data of the pod
 */}}
-{{- define "common.lib.metadata.externalInterfacePodAnnotations" -}}
+{{- define "tc.v1.common.lib.metadata.externalInterfacePodAnnotations" -}}
   {{- $objectData := .objectData -}}
   {{- $rootCtx := .rootCtx -}}
 

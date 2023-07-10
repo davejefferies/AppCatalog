@@ -1,20 +1,19 @@
 {{/* Returns Env */}}
 {{/* Call this template:
-{{ include "common.lib.container.env" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.container.env" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.env" -}}
+{{- define "tc.v1.common.lib.container.env" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
   {{- range $k, $v := $objectData.env -}}
-    {{- include "common.helper.container.envDupeCheck" (dict "rootCtx" $rootCtx "objectData" $objectData "source" "env" "key" $k) }}
+    {{- include "tc.v1.common.helper.container.envDupeCheck" (dict "rootCtx" $rootCtx "objectData" $objectData "source" "env" "key" $k) }}
 - name: {{ $k | quote }}
     {{- if not (kindIs "map" $v) -}}
       {{- $value := "" -}}
-      {{/* Only tpl valid values, there are cases that empty values after merges can be "<nil>" */}}
-      {{- if not (kindIs "invalid" $v) -}}
+      {{- if not (kindIs "invalid" $v) -}} {{/* Only tpl non-empty values */}}
         {{- $value = tpl (toString $v) $rootCtx -}}
       {{- end }}
   value: {{ $value | quote }}
@@ -25,8 +24,8 @@ objectData: The object data to be used to render the container.
         {{- fail (printf "Container - Expected <env> with a ref to have one of [%s], but got [%s]" (join ", " $refs) (join ", " ($v | keys | sortAlpha))) -}}
       {{- end -}}
 
-      {{- $expandName := true -}}
       {{- $name := "" -}}
+
 
       {{- range $key := (list "configMapKeyRef" "secretKeyRef") -}}
         {{- if hasKey $v $key }}
@@ -42,8 +41,25 @@ objectData: The object data to be used to render the container.
       key: {{ $obj.key | quote }}
 
           {{- $name = tpl $obj.name $rootCtx -}}
-          {{- if kindIs "bool" $obj.expandObjectName -}}
-            {{- $expandName = $obj.expandObjectName -}}
+
+          {{- $expandName := true -}}
+          {{- if (hasKey $obj "expandObjectName") -}}
+            {{- if not (kindIs "invalid" $obj.expandObjectName) -}}
+              {{- $expandName = $obj.expandObjectName -}}
+            {{- else -}}
+              {{- fail (printf "Container - Expected the defined key [expandObjectName] in <env.%s> to not be empty" $k) -}}
+            {{- end -}}
+          {{- end -}}
+
+          {{- if kindIs "string" $expandName -}}
+            {{- $expandName = tpl $expandName $rootCtx -}}
+
+            {{/* After tpl it becomes a string, not a bool */}}
+            {{-  if eq $expandName "true" -}}
+              {{- $expandName = true -}}
+            {{- else if eq $expandName "false" -}}
+              {{- $expandName = false -}}
+            {{- end -}}
           {{- end -}}
 
           {{- if $expandName -}}
@@ -67,7 +83,7 @@ objectData: The object data to be used to render the container.
               {{- fail (printf "Container - Expected in <env> the referenced key [%s] in %s [%s] to be defined" $obj.key (camelcase $item) $name) -}}
             {{- end -}}
 
-            {{- $name = (printf "%s-%s" (include "common.lib.chart.names.fullname" $rootCtx) $name) -}}
+            {{- $name = (printf "%s-%s" (include "tc.v1.common.lib.chart.names.fullname" $rootCtx) $name) -}}
           {{- end }}
       name: {{ $name | quote }}
         {{- end -}}

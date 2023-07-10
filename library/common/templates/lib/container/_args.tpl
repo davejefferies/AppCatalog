@@ -1,10 +1,10 @@
 {{/* Returns args list */}}
 {{/* Call this template:
-{{ include "common.lib.container.args" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.container.args" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.args" -}}
+{{- define "tc.v1.common.lib.container.args" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 

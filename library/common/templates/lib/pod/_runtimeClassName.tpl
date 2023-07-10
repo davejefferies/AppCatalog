@@ -1,10 +1,10 @@
 {{/* Returns Runtime Class Name */}}
 {{/* Call this template:
-{{ include "ix.v1.common.lib.pod.runtimeClassName" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.runtimeClassName" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "ix.v1.common.lib.pod.runtimeClassName" -}}
+{{- define "tc.v1.common.lib.pod.runtimeClassName" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -28,12 +28,12 @@ objectData: The object data to be used to render the Pod.
           {{- $gpuAssigned := false -}}
 
           {{- range $k, $v := .gpu -}}
-            {{- if $v -}} {{/* Consider assigned only if value is not "0" or "" */}}
+            {{- if $v -}} {{/* Make sure value is not "0" or "" */}}
               {{- $gpuAssigned = true -}}
             {{- end -}}
           {{- end -}}
 
-          {{- if $gpuAssigned -}} {{/* If GPU is actually assigned */}}
+          {{- if $gpuAssigned -}}
             {{- if (kindIs "map" .targetSelector) -}}
               {{- range $podName, $containers := .targetSelector -}}
                 {{- if eq $objectData.shortName $podName -}} {{/* If the pod is selected */}}

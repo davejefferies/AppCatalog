@@ -1,6 +1,6 @@
 {{/* Returns the global annotations */}}
-{{- define "common.lib.metadata.globalAnnotations" -}}
+{{- define "tc.v1.common.lib.metadata.globalAnnotations" -}}
 
-  {{- include "common.lib.metadata.render" (dict "rootCtx" $ "annotations" .Values.global.annotations) -}}
+  {{- include "tc.v1.common.lib.metadata.render" (dict "rootCtx" $ "annotations" .Values.global.annotations) -}}
 
 {{- end -}}

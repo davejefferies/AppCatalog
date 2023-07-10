@@ -1,10 +1,10 @@
 {{/* Returns enableServiceLinks */}}
 {{/* Call this template:
-{{ include "common.lib.pod.enableServiceLinks" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.enableServiceLinks" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "common.lib.pod.enableServiceLinks" -}}
+{{- define "tc.v1.common.lib.pod.enableServiceLinks" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 

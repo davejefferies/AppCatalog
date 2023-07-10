@@ -1,13 +1,13 @@
 {{/* Metadata Validation */}}
 {{/* Call this template:
-{{ include "common.lib.metadata.validation" (dict "objectData" $objectData "caller" $caller) -}}
+{{ include "tc.v1.common.lib.metadata.validation" (dict "objectData" $objectData "caller" $caller) -}}
 objectData:
   labels: The labels of the configmap.
   annotations: The annotations of the configmap.
   data: The data of the configmap.
 */}}
 
-{{- define "common.lib.metadata.validation" -}}
+{{- define "tc.v1.common.lib.metadata.validation" -}}
   {{- $objectData := .objectData -}}
   {{- $caller := .caller -}}
 

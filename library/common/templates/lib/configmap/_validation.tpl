@@ -1,13 +1,13 @@
 {{/* Configmap Validation */}}
 {{/* Call this template:
-{{ include "common.lib.configmap.validation" (dict "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.configmap.validation" (dict "objectData" $objectData) -}}
 objectData:
   labels: The labels of the configmap.
   annotations: The annotations of the configmap.
   data: The data of the configmap.
 */}}
 
-{{- define "common.lib.configmap.validation" -}}
+{{- define "tc.v1.common.lib.configmap.validation" -}}
   {{- $objectData := .objectData -}}
 
   {{- if not $objectData.data -}}

@@ -1,10 +1,10 @@
 {{/* Returns Service Account Name */}}
 {{/* Call this template:
-{{ include "ix.v1.common.lib.pod.serviceAccountName" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.serviceAccountName" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "ix.v1.common.lib.pod.serviceAccountName" -}}
+{{- define "tc.v1.common.lib.pod.serviceAccountName" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -12,7 +12,7 @@ objectData: The object data to be used to render the Pod.
   {{- $saNameCount := 0 -}}
 
   {{- range $name, $serviceAccount := $rootCtx.Values.serviceAccount -}}
-    {{- $tempName := include "ix.v1.common.lib.chart.names.fullname" $rootCtx -}}
+    {{- $tempName := include "tc.v1.common.lib.chart.names.fullname" $rootCtx -}}
 
     {{- if not $serviceAccount.primary -}}
       {{- $tempName = (printf "%s-%s" $tempName $name) -}}

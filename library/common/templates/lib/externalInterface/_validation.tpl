@@ -1,10 +1,10 @@
 {{/* External Interface Validation */}}
 {{/* Call this template:
-{{ include "common.lib.externalInterface.validation" (dict "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.externalInterface.validation" (dict "objectData" $objectData) -}}
 objectData: The object data to validate that contains the external interface configuratioon.
 */}}
 
-{{- define "common.lib.externalInterface.validation" -}}
+{{- define "tc.v1.common.lib.externalInterface.validation" -}}
   {{- $objectData := .objectData -}}
 
   {{- if and $objectData.targetSelector (not (kindIs "slice" $objectData.targetSelector)) -}}

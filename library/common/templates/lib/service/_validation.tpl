@@ -1,12 +1,12 @@
 {{/* Service Validation */}}
 {{/* Call this template:
-{{ include "common.lib.service.validation" (dict "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.service.validation" (dict "objectData" $objectData) -}}
 objectData:
   rootCtx: The root context of the chart.
   objectData: The service object.
 */}}
 
-{{- define "common.lib.service.validation" -}}
+{{- define "tc.v1.common.lib.service.validation" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -14,46 +14,48 @@ objectData:
     {{- fail (printf "Service - Expected <targetSelector> to be [string], but got [%s]" (kindOf $objectData.targetSelector)) -}}
   {{- end -}}
 
-  {{- $svcTypes := (list "ClusterIP" "NodePort") -}}
+  {{- $svcTypes := (list "ClusterIP" "LoadBalancer" "NodePort" "ExternalName" "ExternalIP") -}}
   {{- if and $objectData.type (not (mustHas $objectData.type $svcTypes)) -}}
     {{- fail (printf "Service - Expected <type> to be one of [%s] but got [%s]" (join ", " $svcTypes) $objectData.type) -}}
   {{- end -}}
 
   {{- $hasEnabledPort := false -}}
-  {{- range $name, $port := $objectData.ports -}}
-    {{- if $port.enabled -}}
-      {{- $hasEnabledPort = true -}}
+  {{- if ne $objectData.type "ExternalName" -}}
+    {{- range $name, $port := $objectData.ports -}}
+      {{- if $port.enabled -}}
+        {{- $hasEnabledPort = true -}}
 
-      {{- if and $port.targetSelector (not (kindIs "string" $port.targetSelector)) -}}
-        {{- fail (printf "Service - Expected <port.targetSelector> to be [string], but got [%s]" (kindOf $port.targetSelector)) -}}
-      {{- end -}}
-
-      {{- if not $port.port -}}
-        {{- fail (printf "Service - Expected non-empty <port.port>") -}}
-      {{- end -}}
-
-      {{- $protocolTypes := (list "tcp" "udp" "http" "https") -}}
-      {{- if $port.protocol -}}
-        {{- if not (mustHas (tpl $port.protocol $rootCtx) $protocolTypes) -}}
-          {{- fail (printf "Service - Expected <port.protocol> to be one of [%s] but got [%s]" (join ", " $protocolTypes) $port.protocol) -}}
+        {{- if and $port.targetSelector (not (kindIs "string" $port.targetSelector)) -}}
+          {{- fail (printf "Service - Expected <port.targetSelector> to be [string], but got [%s]" (kindOf $port.targetSelector)) -}}
         {{- end -}}
+
+        {{- if not $port.port -}}
+          {{- fail (printf "Service - Expected non-empty <port.port>") -}}
+        {{- end -}}
+
+        {{- $protocolTypes := (list "tcp" "udp" "http" "https") -}}
+        {{- if $port.protocol -}}
+          {{- if not (mustHas (tpl $port.protocol $rootCtx) $protocolTypes) -}}
+            {{- fail (printf "Service - Expected <port.protocol> to be one of [%s] but got [%s]" (join ", " $protocolTypes) $port.protocol) -}}
+          {{- end -}}
+        {{- end -}}
+
       {{- end -}}
-
     {{- end -}}
-  {{- end -}}
 
-  {{- if not $hasEnabledPort -}}
-    {{- fail "Service - Expected enabled service to have at least one port" -}}
+    {{- if not $hasEnabledPort -}}
+      {{- fail "Service - Expected enabled service to have at least one port" -}}
+    {{- end -}}
   {{- end -}}
 
 {{- end -}}
 
 {{/* Service Primary Validation */}}
 {{/* Call this template:
-{{ include "common.lib.service.primaryValidation" $ -}}
+{{ include "tc.v1.common.lib.service.primaryValidation" $ -}}
 */}}
 
-{{- define "common.lib.service.primaryValidation" -}}
+{{- define "tc.v1.common.lib.service.primaryValidation" -}}
 
   {{/* Initialize values */}}
   {{- $hasPrimary := false -}}
@@ -74,7 +76,7 @@ objectData:
 
         {{- $hasPrimary = true -}}
 
-        {{- include "common.lib.servicePort.primaryValidation" (dict "objectData" $service.ports) -}}
+        {{- include "tc.v1.common.lib.servicePort.primaryValidation" (dict "objectData" $service.ports) -}}
 
       {{- end -}}
 
@@ -90,12 +92,12 @@ objectData:
 
 {{/* Service Port Primary Validation */}}
 {{/* Call this template:
-{{ include "common.lib.service.primaryValidation" (dict "objectData" $objectData -}}
+{{ include "tc.v1.common.lib.service.primaryValidation" (dict "objectData" $objectData -}}
 objectData:
   The ports of the service.
 */}}
 
-{{- define "common.lib.servicePort.primaryValidation" -}}
+{{- define "tc.v1.common.lib.servicePort.primaryValidation" -}}
   {{- $objectData := .objectData -}}
 
   {{/* Initialize values */}}

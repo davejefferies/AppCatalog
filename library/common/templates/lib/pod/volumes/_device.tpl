@@ -1,10 +1,10 @@
 {{/* Returns device (hostPath) Volume */}}
 {{/* Call this template:
-{{ include "common.lib.pod.volume.device" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.volume.device" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the volume.
 */}}
-{{- define "common.lib.pod.volume.device" -}}
+{{- define "tc.v1.common.lib.pod.volume.device" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 

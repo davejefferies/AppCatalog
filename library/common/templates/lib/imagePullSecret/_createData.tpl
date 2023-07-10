@@ -1,12 +1,12 @@
 {{/* Configmap Validation */}}
 {{/* Call this template:
-{{ include "common.lib.imagePullSecret.createData" (dict "objectData" $objectData "root" $rootCtx) -}}
+{{ include "tc.v1.common.lib.imagePullSecret.createData" (dict "objectData" $objectData "root" $rootCtx) -}}
 rootCtx: The root context of the chart.
 objectData:
   data: The data of the imagePullSecret.
 */}}
 
-{{- define "common.lib.imagePullSecret.createData" -}}
+{{- define "tc.v1.common.lib.imagePullSecret.createData" -}}
   {{- $objectData := .objectData -}}
   {{- $rootCtx := .rootCtx -}}
 

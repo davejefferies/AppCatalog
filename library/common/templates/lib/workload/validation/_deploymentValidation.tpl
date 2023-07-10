@@ -1,12 +1,12 @@
 {{/* Deployment Validation */}}
 {{/* Call this template:
-{{ include "common.lib.workload.deploymentValidation" (dict "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.workload.deploymentValidation" (dict "objectData" $objectData) -}}
 rootCtx: The root context of the chart.
 objectData:
   strategy: The strategy of the object.
   rollingUpdate: The rollingUpdate of the object.
 */}}
-{{- define "common.lib.workload.deploymentValidation" -}}
+{{- define "tc.v1.common.lib.workload.deploymentValidation" -}}
   {{- $objectData := .objectData -}}
 
   {{- if $objectData.strategy -}}

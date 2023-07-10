@@ -1,39 +1,21 @@
-{{/* Certificate Spawwner */}}
-{{/* Call this template:
-{{ include "common.spawner.certificate" $ -}}
-*/}}
+{{/* Renders the certificate objects required by the chart */}}
+{{- define "tc.v1.common.spawner.certificate" -}}
+  {{/* Generate named certs as required */}}
+  {{- range $name, $cert := .Values.cert -}}
+    {{- if $cert.enabled -}}
+      {{- $certValues := $cert -}}
+      {{- $certName := include "tc.v1.common.lib.chart.names.fullname" $ -}}
 
-{{- define "common.spawner.certificate" -}}
+      {{/* set defaults */}}
+      {{- if and (not $certValues.nameOverride) (ne $name (include "tc.v1.common.lib.util.cert.primary" $)) -}}
+        {{- $_ := set $certValues "nameOverride" $name -}}
+      {{- end -}}
 
-  {{- range $name, $certificate := .Values.scaleCertificate -}}
+      {{- if $certValues.nameOverride -}}
+        {{- $certName = printf "%v-%v" $certName $certValues.nameOverride -}}
+      {{- end -}}
 
-    {{- if $certificate.enabled -}}
-
-      {{/* Create a copy of the certificate */}}
-      {{- $objectData := (mustDeepCopy $certificate) -}}
-
-      {{- $objectName := (printf "%s-%s" (include "common.lib.chart.names.fullname" $) $name) -}}
-      {{/* Perform validations */}}
-      {{- include "common.lib.chart.names.validation" (dict "name" $objectName) -}}
-      {{- include "common.lib.certificate.validation" (dict "objectData" $objectData) -}}
-      {{- include "common.lib.metadata.validation" (dict "objectData" $objectData "caller" "Certificate") -}}
-
-      {{/* Prepare data */}}
-      {{- $data := fromJson (include "common.lib.certificate.getData" (dict "rootCtx" $ "objectData" $objectData)) -}}
-      {{- $_ := set $objectData "data" $data -}}
-
-      {{/* Set the type to certificate */}}
-      {{- $_ := set $objectData "type" "certificate" -}}
-
-      {{/* Set the name of the certificate */}}
-      {{- $_ := set $objectData "name" $objectName -}}
-      {{- $_ := set $objectData "shortName" $name -}}
-
-      {{/* Call class to create the object */}}
-      {{- include "common.class.secret" (dict "rootCtx" $ "objectData" $objectData) -}}
-
+      {{- include "tc.v1.common.class.certificate" (dict "root" $ "name" $certName "certificateIssuer" $cert.certificateIssuer "hosts" $cert.hosts ) -}}
     {{- end -}}
-
   {{- end -}}
-
 {{- end -}}

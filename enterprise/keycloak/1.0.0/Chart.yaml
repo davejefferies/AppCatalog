@@ -1,0 +1,20 @@
+name: keycloak
+description: Keycloak
+annotations:
+  title: Keycloak
+type: application
+version: 1.0.0
+apiVersion: v2
+appVersion: 17.0.1-legacy
+kubeVersion: '>=1.16.0-0'
+dependencies:
+  - name: common
+    repository: file://../../../common
+    version: 1.0.8
+home: https://keycloak.org
+icon: https://www.keycloak.org/resources/images/keycloak_icon_512px.svg
+sources:
+  - https://keycloak.org
+  - https://github.com/jboss-dockerfiles/keycloak
+keywords:
+  - auth

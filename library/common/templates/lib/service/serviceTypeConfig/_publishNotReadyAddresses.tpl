@@ -1,11 +1,11 @@
 {{/* Service - publishNotReadyAddresses */}}
 {{/* Call this template:
-{{ include "common.lib.service.publishNotReadyAddresses" (dict "rootCtx" $rootCtx "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.service.publishNotReadyAddresses" (dict "rootCtx" $rootCtx "objectData" $objectData) -}}
 rootCtx: The root context of the chart.
 objectData: The service object data
 */}}
 
-{{- define "common.lib.service.publishNotReadyAddresses" -}}
+{{- define "tc.v1.common.lib.service.publishNotReadyAddresses" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData }}
 

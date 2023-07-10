@@ -1,10 +1,10 @@
 {{/* Returns Tolerations */}}
 {{/* Call this template:
-{{ include "ix.v1.common.lib.pod.tolerations" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.tolerations" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "ix.v1.common.lib.pod.tolerations" -}}
+{{- define "tc.v1.common.lib.pod.tolerations" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -46,8 +46,8 @@ objectData: The object data to be used to render the Pod.
       {{- fail (printf "Expected <tolerations.effect> to be one of [%s], but got [%s]" (join ", " $effects) $effect) -}}
     {{- end -}}
 
-    {{- if and (not (kindIs "invalid" $tolSeconds)) (not (mustHas (kindOf $tolSeconds) (list "int" "float64"))) -}}
-      {{- fail (printf "Expected <tolerations.tolerationSeconds> to be a number, but got [%s]" $tolSeconds) -}}
+    {{- if and (not (kindIs "invalid" $tolSeconds)) (not (mustHas (kindOf $tolSeconds) (list "int" "int64" "float64"))) -}}
+      {{- fail (printf "Expected <tolerations.tolerationSeconds> to be a number, but got [%v]" $tolSeconds) -}}
     {{- end }}
 - operator: {{ $operator }}
     {{- with $key }}
@@ -59,7 +59,7 @@ objectData: The object data to be used to render the Pod.
     {{- with $value }}
   value: {{ . }}
     {{- end -}}
-    {{- if (mustHas (kindOf $tolSeconds) (list "int" "float64")) }}
+    {{- if (mustHas (kindOf $tolSeconds) (list "int" "int64" "float64")) }}
   tolerationSeconds: {{ $tolSeconds }}
     {{- end -}}
 

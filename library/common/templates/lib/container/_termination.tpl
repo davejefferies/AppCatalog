@@ -1,10 +1,10 @@
 {{/* Returns termination */}}
 {{/* Call this template:
-{{ include "common.lib.container.termination" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.container.termination" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.termination" -}}
+{{- define "tc.v1.common.lib.container.termination" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 

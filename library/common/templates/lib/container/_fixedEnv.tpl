@@ -1,10 +1,10 @@
 {{/* Returns Fixed Env */}}
 {{/* Call this template:
-{{ include "common.lib.container.fixedEnv" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.container.fixedEnv" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.fixedEnv" -}}
+{{- define "tc.v1.common.lib.container.fixedEnv" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -13,7 +13,7 @@ objectData: The object data to be used to render the container.
     {{- $_ := set $objectData "fixedEnv" dict -}}
   {{- end -}}
 
-  {{- $nvidiaCaps := $rootCtx.Values.resources.NVIDIA_CAPS -}}
+  {{- $nvidiaCaps := $rootCtx.Values.containerOptions.NVIDIA_CAPS -}}
 
   {{- if $objectData.fixedEnv.NVIDIA_CAPS -}}
     {{- $nvidiaCaps = $objectData.fixedEnv.NVIDIA_CAPS -}}
@@ -30,27 +30,28 @@ objectData: The object data to be used to render the container.
     {{- end -}}
   {{- end -}}
 
-  {{- $secContext := fromJson (include "common.lib.container.securityContext.calculate" (dict "rootCtx" $rootCtx "objectData" $objectData)) -}}
+  {{- $secContext := fromJson (include "tc.v1.common.lib.container.securityContext.calculate" (dict "rootCtx" $rootCtx "objectData" $objectData)) -}}
 
   {{- $fixed := list -}}
   {{- $TZ := $objectData.fixedEnv.TZ | default $rootCtx.Values.TZ -}}
   {{- $UMASK := $objectData.fixedEnv.UMASK | default $rootCtx.Values.securityContext.container.UMASK -}}
-
   {{- $PUID := $objectData.fixedEnv.PUID | default $rootCtx.Values.securityContext.container.PUID -}}
   {{- if and (not (kindIs "invalid" $objectData.fixedEnv.PUID)) (eq (int $objectData.fixedEnv.PUID) 0) -}}
     {{- $PUID = $objectData.fixedEnv.PUID -}}
   {{- end -}}
-
   {{/* calculatedFSGroup is passed from the pod */}}
   {{- $PGID := $objectData.calculatedFSGroup -}}
 
   {{- $fixed = mustAppend $fixed (dict "k" "TZ" "v" $TZ) -}}
   {{- $fixed = mustAppend $fixed (dict "k" "UMASK" "v" $UMASK) -}}
   {{- $fixed = mustAppend $fixed (dict "k" "UMASK_SET" "v" $UMASK) -}}
-  {{- if eq (include "common.lib.container.resources.gpu" (dict "rootCtx" $rootCtx "objectData" $objectData "returnBool" true)) "true" -}}
+  {{/* TODO: Offer gpu section in resources for native helm and adjust this include, then we can remove the "if inside ixChartContext" */}}
+  {{- if eq (include "tc.v1.common.lib.container.resources.gpu" (dict "rootCtx" $rootCtx "objectData" $objectData "returnBool" true)) "true" -}}
     {{- $fixed = mustAppend $fixed (dict "k" "NVIDIA_DRIVER_CAPABILITIES" "v" (join "," $nvidiaCaps)) -}}
-  {{- else -}}
-    {{- $fixed = mustAppend $fixed (dict "k" "NVIDIA_VISIBLE_DEVICES" "v" "void") -}}
+  {{- else -}} {{/* Only when in SCALE */}}
+    {{- if hasKey $rootCtx.Values.global "ixChartContext" -}}
+      {{- $fixed = mustAppend $fixed (dict "k" "NVIDIA_VISIBLE_DEVICES" "v" "void") -}}
+    {{- end -}}
   {{- end -}}
   {{/* If running as root and PUID is set (0 or greater), set related envs */}}
   {{- if and (or (eq (int $secContext.runAsUser) 0) (eq (int $secContext.runAsGroup) 0)) (ge (int $PUID) 0) -}}
@@ -67,7 +68,7 @@ objectData: The object data to be used to render the container.
   {{- end -}}
 
   {{- range $env := $fixed -}}
-    {{- include "common.helper.container.envDupeCheck" (dict "rootCtx" $rootCtx "objectData" $objectData "source" "fixedEnv" "key" $env.k) }}
+    {{- include "tc.v1.common.helper.container.envDupeCheck" (dict "rootCtx" $rootCtx "objectData" $objectData "source" "fixedEnv" "key" $env.k) }}
 - name: {{ $env.k | quote }}
   value: {{ $env.v | quote }}
   {{- end -}}

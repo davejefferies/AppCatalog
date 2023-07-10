@@ -1,10 +1,17 @@
 apiVersion: v2
-appVersion: "latest"
-description: Helm Library for Truenas Scale
+appVersion: latest
+description: Function library for TrueCharts
+home: https://github.com/truecharts/apps/tree/master/charts/common
+icon: https://avatars.githubusercontent.com/u/76400755
 keywords:
-  - library-chart
-  - common
+- truecharts
+- library-chart
+- common
 kubeVersion: '>=1.16.0-0'
+maintainers:
+- email: info@truecharts.org
+  name: TrueCharts
+  url: https://truecharts.org
 name: common
 type: library
-version: 1.0.0
+version: 12.14.2

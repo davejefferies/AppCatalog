@@ -1,10 +1,10 @@
 {{/* Check Env for Duplicates */}}
 {{/* Call this template:
-{{ include "common.helper.container.envDupeCheck" (dict "rootCtx" $ "objectData" $objectData "source" $source "key" $key) }}
+{{ include "tc.v1.common.helper.container.envDupeCheck" (dict "rootCtx" $ "objectData" $objectData "source" $source "key" $key) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.helper.container.envDupeCheck" -}}
+{{- define "tc.v1.common.helper.container.envDupeCheck" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -21,3 +21,5 @@ objectData: The object data to be used to render the container.
   {{- $_ := set $objectData.envDupe $key (dict "source" $source) -}}
 
 {{- end -}}
+
+{{/* TODO:  Unit Tests after env/envList/fixedEnv */}}

@@ -1,8 +1,8 @@
 {{/* Containers Basic Validation */}}
 {{/* Call this template:
-{{ include "common.lib.container.primaryValidation" (dict "rootCtx" $rootCtx "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.container.primaryValidation" (dict "rootCtx" $rootCtx "objectData" $objectData) -}}
 */}}
-{{- define "common.lib.container.primaryValidation" -}}
+{{- define "tc.v1.common.lib.container.primaryValidation" -}}
   {{- $objectData := .objectData -}}
   {{- $rootCtx := .rootCtx -}}
 

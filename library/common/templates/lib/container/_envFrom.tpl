@@ -1,10 +1,10 @@
 {{/* Returns Env From */}}
 {{/* Call this template:
-{{ include "common.lib.container.envFrom" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.container.envFrom" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.envFrom" -}}
+{{- define "tc.v1.common.lib.container.envFrom" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -27,8 +27,23 @@ objectData: The object data to be used to render the container.
         {{- $objectName := tpl .name $rootCtx -}}
 
         {{- $expandName := true -}}
-        {{- if kindIs "bool" .expandObjectName -}}
-          {{- $expandName = .expandObjectName -}}
+        {{- if (hasKey . "expandObjectName") -}}
+          {{- if not (kindIs "invalid" .expandObjectName) -}}
+            {{- $expandName = .expandObjectName -}}
+          {{- else -}}
+            {{- fail (printf "Container - Expected the defined key [expandObjectName] in <envFrom.%s> to not be empty" $ref) -}}
+          {{- end -}}
+        {{- end -}}
+
+        {{- if kindIs "string" $expandName -}}
+          {{- $expandName = tpl $expandName $rootCtx -}}
+
+          {{/* After tpl it becomes a string, not a bool */}}
+          {{-  if eq $expandName "true" -}}
+            {{- $expandName = true -}}
+          {{- else if eq $expandName "false" -}}
+            {{- $expandName = false -}}
+          {{- end -}}
         {{- end -}}
 
         {{- if $expandName -}}
@@ -46,10 +61,10 @@ objectData: The object data to be used to render the container.
               {{- fail (printf "Container - Expected %s [%s] defined in <envFrom> to exist" $source $objectName) -}}
             {{- end -}}
           {{- range $k, $v := $object.data -}}
-            {{- include "common.helper.container.envDupeCheck" (dict "rootCtx" $rootCtx "objectData" $objectData "source" (printf "%s - %s" $source $objectName) "key" $k) -}}
+            {{- include "tc.v1.common.helper.container.envDupeCheck" (dict "rootCtx" $rootCtx "objectData" $objectData "source" (printf "%s - %s" $source $objectName) "key" $k) -}}
           {{- end -}}
 
-          {{- $objectName = (printf "%s-%s" (include "common.lib.chart.names.fullname" $rootCtx) $objectName) -}}
+          {{- $objectName = (printf "%s-%s" (include "tc.v1.common.lib.chart.names.fullname" $rootCtx) $objectName) -}}
         {{- end }}
 - {{ $ref }}:
     name: {{ $objectName | quote }}

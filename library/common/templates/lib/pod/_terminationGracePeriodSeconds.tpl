@@ -1,10 +1,10 @@
 {{/* Returns Termination Grace Period Seconds */}}
 {{/* Call this template:
-{{ include "ix.v1.common.lib.pod.terminationGracePeriodSeconds" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.terminationGracePeriodSeconds" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "ix.v1.common.lib.pod.terminationGracePeriodSeconds" -}}
+{{- define "tc.v1.common.lib.pod.terminationGracePeriodSeconds" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 

@@ -1,27 +1,31 @@
 {{/* Returns Volumes */}}
 {{/* Call this template:
-{{ include "ix.v1.common.lib.pod.volumes" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.volumes" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "ix.v1.common.lib.pod.volumes" -}}
+{{- define "tc.v1.common.lib.pod.volumes" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
   {{- range $name, $persistenceValues := $rootCtx.Values.persistence -}}
     {{- if $persistenceValues.enabled -}}
-
       {{- $persistence := (mustDeepCopy $persistenceValues) -}}
-
       {{- $_ := set $persistence "shortName" $name -}}
-      {{- $_ := set $persistence "type" ($persistence.type | default $rootCtx.Values.fallbackDefaults.persistenceType) -}}
-      {{- include "ix.v1.common.lib.persistence.validation" (dict "rootCtx" $rootCtx "objectData" $persistence) -}}
 
       {{- $selected := false -}}
 
       {{/* If set to true, define volume */}}
       {{- if $persistence.targetSelectAll -}}
         {{- $selected = true -}}
+
+      {{/* If the pod is the autopermission */}}
+      {{- else if eq $objectData.shortName "autopermissions" -}}
+        {{- if $persistence.autoPermissions -}}
+          {{- if or $persistence.autoPermissions.chown $persistence.autoPermissions.chmod -}}
+            {{- $selected = true -}}
+          {{- end -}}
+        {{- end -}}
 
       {{/* If targetSelector is set, check if pod is selected */}}
       {{- else if $persistence.targetSelector -}}
@@ -30,10 +34,8 @@ objectData: The object data to be used to render the Pod.
         {{- end -}}
 
       {{/* If no targetSelector is set or targetSelectAll, check if pod is primary */}}
-      {{- else -}}
-        {{- if $objectData.primary -}}
-          {{- $selected = true -}}
-        {{- end -}}
+      {{- else if $objectData.primary -}}
+        {{- $selected = true -}}
       {{- end -}}
 
       {{/* If pod selected */}}
@@ -41,18 +43,22 @@ objectData: The object data to be used to render the Pod.
         {{/* Define the volume based on type */}}
         {{- $type := ($persistence.type | default $rootCtx.Values.fallbackDefaults.persistenceType) -}}
 
-        {{- if eq "ixVolume" $type -}}
-          {{- include "ix.v1.common.lib.pod.volume.ixVolume" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
+        {{- if eq "pvc" $type -}}
+          {{- include "tc.v1.common.lib.pod.volume.pvc" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
+        {{- else if eq "ixVolume" $type -}}
+          {{- include "tc.v1.common.lib.pod.volume.ixVolume" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
         {{- else if eq "hostPath" $type -}}
-          {{- include "ix.v1.common.lib.pod.volume.hostPath" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
+          {{- include "tc.v1.common.lib.pod.volume.hostPath" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
         {{- else if eq "secret" $type -}}
-          {{- include "ix.v1.common.lib.pod.volume.secret" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
+          {{- include "tc.v1.common.lib.pod.volume.secret" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
         {{- else if eq "configmap" $type -}}
-          {{- include "ix.v1.common.lib.pod.volume.configmap" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
+          {{- include "tc.v1.common.lib.pod.volume.configmap" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
         {{- else if eq "emptyDir" $type -}}
-          {{- include "ix.v1.common.lib.pod.volume.emptyDir" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
+          {{- include "tc.v1.common.lib.pod.volume.emptyDir" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
+        {{- else if eq "nfs" $type -}}
+          {{- include "tc.v1.common.lib.pod.volume.nfs" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
         {{- else if eq "device" $type -}}
-          {{- include "ix.v1.common.lib.pod.volume.device" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
+          {{- include "tc.v1.common.lib.pod.volume.device" (dict "rootCtx" $rootCtx "objectData" $persistence) | trim | nindent 0 -}}
         {{- end -}}
 
       {{- end -}}

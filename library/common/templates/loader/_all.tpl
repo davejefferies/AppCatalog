@@ -1,8 +1,8 @@
 {{/* Main entrypoint for the library */}}
-{{- define "common.loader.all" -}}
+{{- define "tc.v1.common.loader.all" -}}
 
-  {{- include "common.loader.init" . -}}
+  {{- include "tc.v1.common.loader.init" . -}}
 
-  {{- include "common.loader.apply" . -}}
+  {{- include "tc.v1.common.loader.apply" . -}}
 
 {{- end -}}

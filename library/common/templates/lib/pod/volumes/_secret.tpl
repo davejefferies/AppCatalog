@@ -1,10 +1,10 @@
 {{/* Returns Secret Volume */}}
 {{/* Call this template:
-{{ include "common.lib.pod.volume.secret" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.volume.secret" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the volume.
 */}}
-{{- define "common.lib.pod.volume.secret" -}}
+{{- define "tc.v1.common.lib.pod.volume.secret" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -21,14 +21,22 @@ objectData: The object data to be used to render the volume.
   {{- if $expandName -}}
     {{- $object := (get $rootCtx.Values.secret $objectName) -}}
     {{- $certObject := (get $rootCtx.Values.scaleCertificate $objectName) -}}
-    {{- if and (not $object) (not $certObject) -}}
+    {{- if and (not $object) (not $certObject) (not $objectData.optional) -}}
       {{- fail (printf "Persistence - Expected secret [%s] defined in <objectName> to exist" $objectName) -}}
     {{- end -}}
-    {{- $objectName = (printf "%s-%s" (include "common.lib.chart.names.fullname" $rootCtx) $objectName) -}}
+
+    {{- $objectName = (printf "%s-%s" (include "tc.v1.common.lib.chart.names.fullname" $rootCtx) $objectName) -}}
+  {{- end -}}
+
+  {{- $optional := false -}}
+  {{- if hasKey $objectData "optional" -}}
+    {{- if not (kindIs "bool" $objectData.optional) -}}
+      {{- fail (printf "Persistence - Expected <optional> to be [bool], but got [%s]" (kindOf $objectData.optional)) -}}
+    {{- end -}}
+    {{- $optional = $objectData.optional -}}
   {{- end -}}
 
   {{- $defMode := "" -}}
-
   {{- if (and $objectData.defaultMode (not (kindIs "string" $objectData.defaultMode))) -}}
     {{- fail (printf "Persistence - Expected <defaultMode> to be [string], but got [%s]" (kindOf $objectData.defaultMode)) -}}
   {{- end -}}
@@ -45,7 +53,8 @@ objectData: The object data to be used to render the volume.
     secretName: {{ $objectName }}
     {{- with $defMode }}
     defaultMode: {{ . }}
-    {{- end -}}
+    {{- end }}
+    optional: {{ $optional }}
     {{- with $objectData.items }}
     items:
       {{- range . -}}

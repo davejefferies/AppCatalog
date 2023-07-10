@@ -1,11 +1,11 @@
 {{/* Service - Get Selected Pod */}}
 {{/* Call this template:
-{{ include "common.lib.helpers.getSelectedPodValues" (dict "rootCtx" $rootCtx "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.helpers.getSelectedPodValues" (dict "rootCtx" $rootCtx "objectData" $objectData) -}}
 objectData: The object data of the service
 rootCtx: The root context of the chart.
 */}}
 
-{{- define "common.lib.helpers.getSelectedPodValues" -}}
+{{- define "tc.v1.common.lib.helpers.getSelectedPodValues" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
   {{- $caller := .caller -}}

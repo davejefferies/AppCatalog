@@ -1,10 +1,10 @@
 {{/* Returns ixVolume Volume */}}
 {{/* Call this template:
-{{ include "common.lib.pod.volume.ixVolume" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.volume.ixVolume" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the volume.
 */}}
-{{- define "common.lib.pod.volume.ixVolume" -}}
+{{- define "tc.v1.common.lib.pod.volume.ixVolume" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 

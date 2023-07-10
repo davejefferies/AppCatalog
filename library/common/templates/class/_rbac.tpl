@@ -1,6 +1,6 @@
 {{/* RBAC Class */}}
 {{/* Call this template:
-{{ include "common.class.rbac" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.class.rbac" (dict "rootCtx" $ "objectData" $objectData) }}
 
 rootCtx: The root context of the chart.
 objectData:
@@ -12,7 +12,7 @@ objectData:
   subjects: The subjects of the rbac.
 */}}
 
-{{- define "common.class.rbac" -}}
+{{- define "tc.v1.common.class.rbac" -}}
 
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData }}
@@ -24,18 +24,18 @@ metadata:
   {{- if not $objectData.clusterWide }}
   namespace: {{ $rootCtx.Release.Namespace }}
   {{- end }}
-  {{- $labels := (mustMerge ($objectData.labels | default dict) (include "common.lib.metadata.allLabels" $rootCtx | fromYaml)) -}}
-  {{- with (include "common.lib.metadata.render" (dict "rootCtx" $rootCtx "labels" $labels) | trim) }}
+  {{- $labels := (mustMerge ($objectData.labels | default dict) (include "tc.v1.common.lib.metadata.allLabels" $rootCtx | fromYaml)) -}}
+  {{- with (include "tc.v1.common.lib.metadata.render" (dict "rootCtx" $rootCtx "labels" $labels) | trim) }}
   labels:
     {{- . | nindent 4 }}
   {{- end -}}
-  {{- $annotations := (mustMerge ($objectData.annotations | default dict) (include "common.lib.metadata.allAnnotations" $rootCtx | fromYaml)) -}}
-  {{- with (include "common.lib.metadata.render" (dict "rootCtx" $rootCtx "annotations" $annotations) | trim) }}
+  {{- $annotations := (mustMerge ($objectData.annotations | default dict) (include "tc.v1.common.lib.metadata.allAnnotations" $rootCtx | fromYaml)) -}}
+  {{- with (include "tc.v1.common.lib.metadata.render" (dict "rootCtx" $rootCtx "annotations" $annotations) | trim) }}
   annotations:
     {{- . | nindent 4 }}
   {{- end }}
 rules:
-  {{- include "common.lib.rbac.rules" (dict "rootCtx" $rootCtx "objectData" $objectData) | trim | nindent 2 }}
+  {{- include "tc.v1.common.lib.rbac.rules" (dict "rootCtx" $rootCtx "objectData" $objectData) | trim | nindent 2 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: {{ ternary "ClusterRoleBinding" "RoleBinding" $objectData.clusterWide }}
@@ -44,13 +44,13 @@ metadata:
   {{- if not $objectData.clusterWide }}
   namespace: {{ $rootCtx.Release.Namespace }}
   {{- end }}
-  {{- $labels := (mustMerge ($objectData.labels | default dict) (include "common.lib.metadata.allLabels" $rootCtx | fromYaml)) -}}
-  {{- with (include "common.lib.metadata.render" (dict "rootCtx" $rootCtx "labels" $labels) | trim) }}
+  {{- $labels := (mustMerge ($objectData.labels | default dict) (include "tc.v1.common.lib.metadata.allLabels" $rootCtx | fromYaml)) -}}
+  {{- with (include "tc.v1.common.lib.metadata.render" (dict "rootCtx" $rootCtx "labels" $labels) | trim) }}
   labels:
     {{- . | nindent 4 }}
   {{- end -}}
-  {{- $annotations := (mustMerge ($objectData.annotations | default dict) (include "common.lib.metadata.allAnnotations" $rootCtx | fromYaml)) -}}
-  {{- with (include "common.lib.metadata.render" (dict "rootCtx" $rootCtx "annotations" $annotations) | trim) }}
+  {{- $annotations := (mustMerge ($objectData.annotations | default dict) (include "tc.v1.common.lib.metadata.allAnnotations" $rootCtx | fromYaml)) -}}
+  {{- with (include "tc.v1.common.lib.metadata.render" (dict "rootCtx" $rootCtx "annotations" $annotations) | trim) }}
   annotations:
     {{- . | nindent 4 }}
   {{- end }}
@@ -59,6 +59,6 @@ roleRef:
   kind: {{ ternary "ClusterRole" "Role" $objectData.clusterWide }}
   name: {{ $objectData.name }}
 subjects:
-  {{- include "common.lib.rbac.serviceAccount" (dict "rootCtx" $rootCtx "objectData" $objectData) | trim | nindent 2 }}
-  {{- include "common.lib.rbac.subjects" (dict "rootCtx" $rootCtx "objectData" $objectData) | trim | nindent 2 }}
+  {{- include "tc.v1.common.lib.rbac.serviceAccount" (dict "rootCtx" $rootCtx "objectData" $objectData) | trim | nindent 2 }}
+  {{- include "tc.v1.common.lib.rbac.subjects" (dict "rootCtx" $rootCtx "objectData" $objectData) | trim | nindent 2 }}
 {{- end -}}

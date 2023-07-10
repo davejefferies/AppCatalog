@@ -1,10 +1,10 @@
 {{/* Returns tcpSocket action */}}
 {{/* Call this template:
-{{ include "common.lib.container.actions.tcpSocket" (dict "rootCtx" $ "objectData" $objectData "caller" $caller) }}
+{{ include "tc.v1.common.lib.container.actions.tcpSocket" (dict "rootCtx" $ "objectData" $objectData "caller" $caller) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.actions.tcpSocket" -}}
+{{- define "tc.v1.common.lib.container.actions.tcpSocket" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
   {{- $caller := .caller -}}

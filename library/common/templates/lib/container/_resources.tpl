@@ -1,10 +1,10 @@
 {{/* Returns Resources */}}
 {{/* Call this template:
-{{ include "common.lib.container.resources" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.container.resources" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.resources" -}}
+{{- define "tc.v1.common.lib.container.resources" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -14,7 +14,7 @@ objectData: The object data to be used to render the container.
     {{- $resources = mustMergeOverwrite $resources $objectData.resources -}}
   {{- end -}}
 
-  {{- include "common.lib.container.resources.validation" (dict "resources" $resources) -}}
+  {{- include "tc.v1.common.lib.container.resources.validation" (dict "resources" $resources) -}}
 
 requests:
   cpu: {{ $resources.requests.cpu }}
@@ -27,17 +27,17 @@ limits:
     {{- with $resources.limits.memory }} {{/* Passing 0, will not render it, meaning unlimited */}}
   memory: {{ . }}
     {{- end -}}
-    {{- include "common.lib.container.resources.gpu" (dict "rootCtx" $rootCtx "objectData" $objectData) | trim | nindent 2 -}}
+    {{- include "tc.v1.common.lib.container.resources.gpu" (dict "rootCtx" $rootCtx "objectData" $objectData) | trim | nindent 2 -}}
   {{- end -}}
 {{- end -}}
 
 {{/* Returns GPU resource */}}
 {{/* Call this template:
-{{ include "common.lib.container.resources.gpu" (dict "rootCtx" $rootCtx "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.container.resources.gpu" (dict "rootCtx" $rootCtx "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.resources.gpu" -}}
+{{- define "tc.v1.common.lib.container.resources.gpu" -}}
   {{- $objectData := .objectData -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $returnBool := .returnBool -}}
@@ -77,7 +77,7 @@ objectData: The object data to be used to render the container.
       {{- range $k, $v := $gpu -}}
         {{- if or (kindIs "invalid" $v) (eq (toString $v) "") -}}
           {{- fail "Container - Expected non-empty <scaleGPU> <value>" -}}
-        {{- end -}} {{/* Dont try to schedule 0 GPUs */}}
+        {{- end -}} {{/* Don't try to schedule 0 GPUs */}}
         {{- if gt (int $v) 0 }}
 {{ $k }}: {{ $v | quote }}
         {{- end -}}
@@ -93,11 +93,11 @@ objectData: The object data to be used to render the container.
 
 {{/* Validates resources to match a pattern */}}
 {{/* Call this template:
-{{ include "common.lib.container.resources.validation" (dict "resources" $resources) }}
+{{ include "tc.v1.common.lib.container.resources.validation" (dict "resources" $resources) }}
 rootCtx: The root context of the chart.
 resources: The resources object
 */}}
-{{- define "common.lib.container.resources.validation" -}}
+{{- define "tc.v1.common.lib.container.resources.validation" -}}
   {{- $resources := .resources -}}
   {{/* CPU: https://regex101.com/r/D4HouI/1 */}}
   {{/* MEM: https://regex101.com/r/NNPV2D/1 */}}

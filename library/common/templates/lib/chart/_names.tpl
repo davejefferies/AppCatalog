@@ -1,16 +1,16 @@
 {{/* Contains functions for generating names */}}
 
 {{/* Returns the name of the Chart */}}
-{{- define "common.lib.chart.names.name" -}}
+{{- define "tc.v1.common.lib.chart.names.name" -}}
 
   {{- .Chart.Name | lower | trunc 63 | trimSuffix "-" -}}
 
 {{- end -}}
 
 {{/* Returns the fullname of the Chart */}}
-{{- define "common.lib.chart.names.fullname" -}}
+{{- define "tc.v1.common.lib.chart.names.fullname" -}}
 
-  {{- $name := include "common.lib.chart.names.name" . -}}
+  {{- $name := include "tc.v1.common.lib.chart.names.name" . -}}
 
   {{- if contains $name .Release.Name -}}
     {{- $name = .Release.Name -}}
@@ -22,8 +22,15 @@
 
 {{- end -}}
 
+{{/* Returns the fqdn of the Chart */}}
+{{- define "tc.v1.common.lib.chart.names.fqdn" -}}
+
+  {{- printf "%s.%s" (include "tc.v1.common.lib.chart.names.name" .) .Release.Namespace | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+
+{{- end -}}
+
 {{/* Validates names */}}
-{{- define "common.lib.chart.names.validation" -}}
+{{- define "tc.v1.common.lib.chart.names.validation" -}}
 
   {{- $name := .name -}}
 
@@ -34,7 +41,7 @@
 {{- end -}}
 
 {{/* Create chart name and version as used by the chart label */}}
-{{- define "common.lib.chart.names.chart" -}}
+{{- define "tc.v1.common.lib.chart.names.chart" -}}
 
   {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 

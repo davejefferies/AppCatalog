@@ -1,20 +1,20 @@
 {{/* Secret Validation */}}
 {{/* Call this template:
-{{ include "common.lib.secret.validation" (dict "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.secret.validation" (dict "objectData" $objectData) -}}
 objectData:
   labels: The labels of the secret.
   annotations: The annotations of the secret.
   data: The data of the secret.
 */}}
 
-{{- define "common.lib.secret.validation" -}}
+{{- define "tc.v1.common.lib.secret.validation" -}}
   {{- $objectData := .objectData -}}
 
-  {{- if not $objectData.data -}}
-    {{- fail "Secret - Expected non-empty <data>" -}}
+  {{- if and ( not $objectData.data ) ( not $objectData.stringData ) -}}
+    {{- fail "Secret - Expected non-empty <data> or <stringData>" -}}
   {{- end -}}
 
-  {{- if not (kindIs "map" $objectData.data) -}}
+  {{- if and $objectData.data (not (kindIs "map" $objectData.data)) -}}
     {{- fail (printf "Secret - Expected <data> to be a dictionary, but got [%v]" (kindOf $objectData.data)) -}}
   {{- end -}}
 

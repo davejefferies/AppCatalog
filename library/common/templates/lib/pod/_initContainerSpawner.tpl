@@ -1,19 +1,23 @@
 {{/* Init Containers */}}
 {{/* Call this template:
-{{ include "ix.v1.common.lib.pod.initContainerSpawner" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.initContainerSpawner" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "ix.v1.common.lib.pod.initContainerSpawner" -}}
+{{- define "tc.v1.common.lib.pod.initContainerSpawner" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
-  {{- $initContainers := (dict  "init" list
+  {{- $initContainers := (dict  "system" list
+                                "init" list
                                 "install" list
                                 "upgrade" list) -}}
 
-  {{- $types := (list "init" "install" "upgrade") -}}
-  {{- range $containerName, $containerValues := $objectData.podSpec.initContainers -}}
+  {{- $types := (list "system" "init" "install" "upgrade") -}}
+
+  {{- $mergedContainers := $objectData.podSpec.initContainers -}}
+
+  {{- range $containerName, $containerValues := $mergedContainers -}}
 
     {{- $enabled := $containerValues.enabled -}}
     {{- if kindIs "string" $enabled -}}
@@ -22,7 +26,7 @@ objectData: The object data to be used to render the Pod.
       {{/* After tpl it becomes a string, not a bool */}}
       {{-  if eq $enabled "true" -}}
         {{- $enabled = true -}}
-      {{- else -}}
+      {{- else if eq $enabled "false" -}}
         {{- $enabled = false -}}
       {{- end -}}
     {{- end -}}
@@ -39,7 +43,7 @@ objectData: The object data to be used to render the Pod.
       {{- end -}}
 
       {{- $container := (mustDeepCopy $containerValues) -}}
-      {{- $name := printf "%s-%s-%s" (include "ix.v1.common.lib.chart.names.fullname" $rootCtx) $containerType $containerName -}}
+      {{- $name := printf "%s-%s-%s" (include "tc.v1.common.lib.chart.names.fullname" $rootCtx) $containerType $containerName -}}
 
       {{- $_ := set $container "name" $name -}}
       {{- $_ := set $container "shortName" $containerName -}}
@@ -66,18 +70,22 @@ objectData: The object data to be used to render the Pod.
 
   {{- if $rootCtx.Release.IsInstall -}}
     {{- range $container := (get $initContainers "install") -}}
-      {{- include "ix.v1.common.lib.pod.container" (dict "rootCtx" $rootCtx "objectData" $container) -}}
+      {{- include "tc.v1.common.lib.pod.container" (dict "rootCtx" $rootCtx "objectData" $container) -}}
     {{- end -}}
   {{- end -}}
 
   {{- if $rootCtx.Release.IsUpgrade -}}
     {{- range $container := (get $initContainers "upgrade") -}}
-      {{- include "ix.v1.common.lib.pod.container" (dict "rootCtx" $rootCtx "objectData" $container) -}}
+      {{- include "tc.v1.common.lib.pod.container" (dict "rootCtx" $rootCtx "objectData" $container) -}}
     {{- end -}}
   {{- end -}}
 
+  {{- range $container := (get $initContainers "system") -}}
+    {{- include "tc.v1.common.lib.pod.container" (dict "rootCtx" $rootCtx "objectData" $container) -}}
+  {{- end -}}
+
   {{- range $container := (get $initContainers "init") -}}
-    {{- include "ix.v1.common.lib.pod.container" (dict "rootCtx" $rootCtx "objectData" $container) -}}
+    {{- include "tc.v1.common.lib.pod.container" (dict "rootCtx" $rootCtx "objectData" $container) -}}
   {{- end -}}
 
 {{- end -}}

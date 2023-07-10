@@ -1,13 +1,13 @@
 {{/* Job Validation */}}
 {{/* Call this template:
-{{ include "common.lib.workload.jobValidation" (dict "objectData" $objectData) -}}
+{{ include "tc.v1.common.lib.workload.jobValidation" (dict "objectData" $objectData) -}}
 rootCtx: The root context of the chart.
 objectData:
   completionMode: The completionMode of the object.
   completions: The completions of the object.
   parallelism: The parallelism of the object.
 */}}
-{{- define "common.lib.workload.jobValidation" -}}
+{{- define "tc.v1.common.lib.workload.jobValidation" -}}
   {{- $objectData := .objectData -}}
 
   {{- if $objectData.completionMode -}}

@@ -1,11 +1,11 @@
 {{/* Returns Rules for rbac */}}
 {{/* Call this template:
-{{ include "common.lib.rbac.rules" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.rbac.rules" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the RBAC.
 */}}
 {{/* Parses service accounts, and checks if RBAC have selected any of them */}}
-{{- define "common.lib.rbac.rules" -}}
+{{- define "tc.v1.common.lib.rbac.rules" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 

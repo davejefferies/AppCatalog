@@ -1,17 +1,17 @@
 {{/* Returns Image Pull Secret List */}}
 {{/* Call this template:
-{{ include "ix.v1.common.lib.pod.imagePullSecret" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.imagePullSecret" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "ix.v1.common.lib.pod.imagePullSecret" -}}
+{{- define "tc.v1.common.lib.pod.imagePullSecret" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
   {{- $imgPullSecrets := list -}}
 
   {{- range $name, $imgPull := $rootCtx.Values.imagePullSecret -}}
-    {{- $pullName := (printf "%s-%s" (include "ix.v1.common.lib.chart.names.fullname" $rootCtx) $name) -}}
+    {{- $pullName := (printf "%s-%s" (include "tc.v1.common.lib.chart.names.fullname" $rootCtx) $name) -}}
 
     {{- if $imgPull.enabled -}}
       {{/* If targetSelectAll is true */}}

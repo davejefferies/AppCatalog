@@ -2,20 +2,31 @@
   "dependency": {},
   "dev": {},
   "enterprise": {
-    "cloudflareddns": {
-      "app_readme": "<p>Automate Cloudflare DNS records for those with a dynamic IP.</p>",
+    "keycloak": {
+      "app_readme": "",
       "categories": [
-        "networking"
+        "productivity"
       ],
-      "description": "Automate Cloudflare DNS records for those with a dynamic IP",
+      "description": "",
       "healthy": true,
       "healthy_error": null,
-      "location": "/__w/catalog/stable/cloudflareddns",
+      "home": "https://keycloak.org",
+      "location": "/__w/catalog/enterprise/keycloak",
       "latest_version": "1.0.0",
-      "latest_app_version": "latest",
-      "latest_human_version": "1.0.0",
-      "name": "cloudflareddns",
-      "icon_url": "https://raw.githubusercontent.com/davejefferies/AppCatalog/master/icon/cloudflareddns.svg"
+      "latest_app_version": "17.0.1-legacy",
+      "latest_human_version": "17.0.1_1.0.0",
+      "name": "keycloak",
+      "recommended": true,
+      "title": "Keycloak",
+      "tags": [
+        "auth"
+      ],
+      "sources": [
+        "https://github.com/codecentric/helm-charts",
+        "https://github.com/jboss-dockerfiles/keycloak",
+        "https://github.com/bitnami/charts/tree/master/bitnami/postgresql"
+      ],
+      "icon_url": "https://www.keycloak.org/resources/images/keycloak_icon_512px.svg"
     }
   },
   "stable": {}

@@ -1,12 +1,12 @@
 {{/* RBAC Spawner */}}
 {{/* Call this template:
-{{ include "common.spawner.rbac" $ -}}
+{{ include "tc.v1.common.spawner.rbac" $ -}}
 */}}
 
-{{- define "common.spawner.rbac" -}}
+{{- define "tc.v1.common.spawner.rbac" -}}
 
   {{/* Primary validation for enabled rbacs. */}}
-  {{- include "common.lib.rbac.primaryValidation" $ -}}
+  {{- include "tc.v1.common.lib.rbac.primaryValidation" $ -}}
 
   {{- range $name, $rbac := .Values.rbac -}}
 
@@ -15,14 +15,14 @@
       {{/* Create a copy of the configmap */}}
       {{- $objectData := (mustDeepCopy $rbac) -}}
 
-      {{- $objectName := include "common.lib.chart.names.fullname" $ -}}
+      {{- $objectName := include "tc.v1.common.lib.chart.names.fullname" $ -}}
       {{- if not $objectData.primary -}}
-        {{- $objectName = (printf "%s-%s" (include "common.lib.chart.names.fullname" $) $name) -}}
+        {{- $objectName = (printf "%s-%s" (include "tc.v1.common.lib.chart.names.fullname" $) $name) -}}
       {{- end -}}
 
       {{/* Perform validations */}}
-      {{- include "common.lib.chart.names.validation" (dict "name" $objectName) -}}
-      {{- include "common.lib.metadata.validation" (dict "objectData" $objectData "caller" "RBAC") -}}
+      {{- include "tc.v1.common.lib.chart.names.validation" (dict "name" $objectName) -}}
+      {{- include "tc.v1.common.lib.metadata.validation" (dict "objectData" $objectData "caller" "RBAC") -}}
 
       {{/* Set the name of the rbac */}}
       {{- $_ := set $objectData "name" $objectName -}}
@@ -34,7 +34,7 @@
       {{- end -}}
 
       {{/* Call class to create the object */}}
-      {{- include "common.class.rbac" (dict "rootCtx" $ "objectData" $objectData) -}}
+      {{- include "tc.v1.common.class.rbac" (dict "rootCtx" $ "objectData" $objectData) -}}
 
     {{- end -}}
 

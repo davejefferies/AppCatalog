@@ -1,10 +1,10 @@
 {{/* Returns the image dictionary */}}
 {{/* Call this template:
-{{ include "common.lib.container.imageSelector" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.container.imageSelector" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the container.
 */}}
-{{- define "common.lib.container.imageSelector" -}}
+{{- define "tc.v1.common.lib.container.imageSelector" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -27,10 +27,6 @@ objectData: The object data to be used to render the container.
 
   {{- if not $imageObj.tag -}}
     {{- fail (printf "Container - Expected non-empty <.Values.%s.tag>" $selector) -}}
-  {{- end -}}
-
-  {{- if not (kindIs "string" $imageObj.tag) -}}
-    {{- fail (printf "Container - Expected <.Values.%s.tag> to be string, but got [%s]" $selector (kindOf $imageObj.tag)) -}}
   {{- end -}}
 
   {{- if not $imageObj.pullPolicy -}}

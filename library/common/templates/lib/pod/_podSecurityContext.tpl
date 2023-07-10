@@ -1,10 +1,10 @@
 {{/* Returns Pod Security Context */}}
 {{/* Call this template:
-{{ include "ix.v1.common.lib.pod.securityContext" (dict "rootCtx" $ "objectData" $objectData) }}
+{{ include "tc.v1.common.lib.pod.securityContext" (dict "rootCtx" $ "objectData" $objectData) }}
 rootCtx: The root context of the chart.
 objectData: The object data to be used to render the Pod.
 */}}
-{{- define "ix.v1.common.lib.pod.securityContext" -}}
+{{- define "tc.v1.common.lib.pod.securityContext" -}}
   {{- $rootCtx := .rootCtx -}}
   {{- $objectData := .objectData -}}
 
@@ -20,11 +20,6 @@ objectData: The object data to be used to render the Pod.
     {{- $secContext = mustMergeOverwrite $secContext . -}}
   {{- end -}}
 
-  {{/* TODO: Add supplemental groups
-    devices (5, 10, 20, 24) (Only when devices is assigned on the pods containers)
-    TODO: Unit Test the above cases
-  */}}
-
   {{- $gpuAdded := false -}}
   {{- range $GPUValues := $rootCtx.Values.scaleGPU -}}
     {{/* If there is a selector and pod is selected */}}
@@ -32,9 +27,27 @@ objectData: The object data to be used to render the Pod.
       {{- if mustHas $objectData.shortName ($GPUValues.targetSelector | keys) -}}
         {{- $gpuAdded = true -}}
       {{- end -}}
-    {{/* If there isnt a selector, but pod is primary */}}
+    {{/* If there is not a selector, but pod is primary */}}
     {{- else if $objectData.primary -}}
       {{- $gpuAdded = true -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $deviceGroups := (list 5 10 20 24) -}}
+  {{- $deviceAdded := false -}}
+  {{- range $persistenceName, $persistenceValues := $rootCtx.Values.persistence -}}
+    {{- if $persistenceValues.enabled -}}
+      {{- if eq $persistenceValues.type "device" -}}
+        {{- if $persistenceValues.targetSelectAll -}}
+          {{- $deviceAdded = true -}}
+        {{- else if $persistenceValues.targetSelector -}}
+          {{- if mustHas $objectData.shortName ($persistenceValues.targetSelector | keys) -}}
+            {{- $deviceAdded = true -}}
+          {{- end -}}
+        {{- else if $objectData.podPrimary -}}
+          {{- $deviceAdded = true -}}
+        {{- end -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 
@@ -42,9 +55,21 @@ objectData: The object data to be used to render the Pod.
     {{- $_ := set $secContext "supplementalGroups" (concat $secContext.supplementalGroups (list 44 107)) -}}
   {{- end -}}
 
-  {{- $portRange := fromJson (include "ix.v1.common.lib.helpers.securityContext.getPortRange" (dict "rootCtx" $rootCtx "objectData" $objectData)) -}}
-  {{- if and $portRange.low (le (int $portRange.low) 1024) -}} {{/* If a container wants to bind a port <= 1024 change the unprivileged_port_start */}}
-    {{- if ne (include "ix.v1.common.lib.pod.hostNetwork" (dict "rootCtx" $rootCtx "objectData" $objectData)) "true" -}}
+  {{- if $deviceAdded -}}
+    {{- $_ := set $secContext "supplementalGroups" (concat $secContext.supplementalGroups $deviceGroups) -}}
+  {{- end -}}
+
+  {{- $_ := set $secContext "supplementalGroups" (concat $secContext.supplementalGroups (list 568)) -}}
+
+  {{- if not (deepEqual $secContext.supplementalGroups (mustUniq $secContext.supplementalGroups)) -}}
+    {{- fail (printf "Pod - Expected <supplementalGroups> to have only unique values, but got [%s]" (join ", " $secContext.supplementalGroups)) -}}
+  {{- end -}}
+
+  {{- $portRange := fromJson (include "tc.v1.common.lib.helpers.securityContext.getPortRange" (dict "rootCtx" $rootCtx "objectData" $objectData)) -}}
+  {{/* If a container wants to bind a port <= 1024 change the unprivileged_port_start */}}
+  {{- if and $portRange.low (le (int $portRange.low) 1024) -}}
+    {{/* That sysctl is not supported when hostNet is enabled */}}
+    {{- if ne (include "tc.v1.common.lib.pod.hostNetwork" (dict "rootCtx" $rootCtx "objectData" $objectData)) "true" -}}
       {{- $_ := set $secContext "sysctls" (mustAppend $secContext.sysctls (dict "name" "net.ipv4.ip_unprivileged_port_start" "value" (printf "%v" $portRange.low))) -}}
     {{- end -}}
   {{- end -}}
